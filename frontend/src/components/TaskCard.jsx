@@ -7,9 +7,10 @@ import { Trash2 } from "lucide-react";
 export default function TaskCard({ task, onDelete }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: task.id,
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: task.id,
+    });
 
   const style = {
     transform: CSS.Translate.toString(transform),
@@ -23,7 +24,8 @@ export default function TaskCard({ task, onDelete }) {
     Crítica: "bg-red-100 text-red-600",
   };
 
-  const priorityClass = priorityStyles[task.priority] || "bg-zinc-100 text-zinc-500";
+  const priorityClass =
+    priorityStyles[task.priority] || "bg-zinc-100 text-zinc-500";
 
   return (
     <>
@@ -38,6 +40,7 @@ export default function TaskCard({ task, onDelete }) {
 
         <button
           type="button"
+          onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => {
             e.stopPropagation();
             setShowDeleteModal(true);
@@ -63,7 +66,9 @@ export default function TaskCard({ task, onDelete }) {
           <span className="truncate rounded-md bg-zinc-100 px-2 py-1 font-mono text-xs text-zinc-700 sm:px-3 sm:py-1.5 sm:text-sm">
             {task.category}
           </span>
-          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold sm:h-9 sm:w-9 sm:text-sm ${priorityClass}`}>
+          <div
+            className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold sm:h-9 sm:w-9 sm:text-sm ${priorityClass}`}
+          >
             {task.priority}
           </div>
         </div>

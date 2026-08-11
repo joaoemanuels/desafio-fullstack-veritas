@@ -35,7 +35,7 @@ export default function Column({ column, onDeleteTask }) {
             ))}
           </div>
         ) : (
-          <EmptyState />
+          <EmptyState message={"Adicione uma tarefa"}/>
         )}
       </div>
     </section>

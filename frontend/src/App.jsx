@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import TaskModal from "./components/TaskModal";
 import KanbanBoard from "./components/KanbanBoard";
 import * as api from "./services/api";
+import Loading from "./ui/Loading";
 
 const columnsMeta = [
   {
@@ -132,7 +133,7 @@ export default function App() {
       )}
 
       {isLoading ? (
-        <p className="p-4 text-sm text-zinc-500">Carregando tarefas...</p> //implementar o componente de loading
+        <Loading message="Carregando tarefas..." />
       ) : (
         <DndContext
           collisionDetection={closestCorners}
