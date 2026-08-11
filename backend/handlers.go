@@ -91,6 +91,8 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	existing.Title = updates.Title
 	existing.Description = updates.Description
 	existing.Status = updates.Status
+	existing.Category = updates.Category
+	existing.Priority = updates.Priority
 	db.tasks[id] = existing
 
 	respondJSON(w, http.StatusOK, existing)

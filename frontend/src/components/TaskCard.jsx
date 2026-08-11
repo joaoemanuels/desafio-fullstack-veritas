@@ -1,6 +1,16 @@
 import { Trash2 } from "lucide-react";
 
 export default function TaskCard({ task, onDelete }) {
+  const priorityStyles = {
+    Baixa: "bg-emerald-100 text-emerald-600",
+    Média: "bg-yellow-100 text-yellow-600",
+    Alta: "bg-orange-100 text-orange-600",
+    Crítica: "bg-red-100 text-red-600",
+  };
+
+  const priorityClass =
+    priorityStyles[task.priority] || "bg-zinc-100 text-zinc-500";
+
   return (
     <article className="relative overflow-hidden rounded-xl bg-white p-4 shadow-sm sm:p-5">
       <div className={`absolute left-0 top-0 h-full w-1 ${task.color}`} />
@@ -31,7 +41,9 @@ export default function TaskCard({ task, onDelete }) {
           {task.category}
         </span>
 
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-500 sm:h-9 sm:w-9 sm:text-sm">
+        <div
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold sm:h-9 sm:w-9 sm:text-sm ${priorityClass}`}
+        >
           {task.priority}
         </div>
       </div>

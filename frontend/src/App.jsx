@@ -50,12 +50,16 @@ export default function App() {
 
   async function handleSaveTask(task) {
     setError(null);
+
     try {
       const created = await api.createTask({
         title: task.title,
         description: task.description,
+        category: task.category,
+        priority: task.priority,
         status: task.status,
       });
+
       setTasks((prev) => [...prev, created]);
       setShowModal(false);
     } catch (err) {

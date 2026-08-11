@@ -2,7 +2,7 @@ import { useState } from "react";
 
 export default function TaskModal({ onClose, onSave }) {
   const [status, setStatus] = useState("todo");
-  const [priority, setPriority] = useState("medium");
+  const [priority, setPriority] = useState("Média");
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -13,8 +13,8 @@ export default function TaskModal({ onClose, onSave }) {
       title: formData.get("title"),
       description: formData.get("description"),
       category: formData.get("category"),
-      status,
       priority,
+      status,
     };
 
     onSave(task);
@@ -112,9 +112,6 @@ export default function TaskModal({ onClose, onSave }) {
               className="h-10 w-full border border-zinc-200 px-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400 sm:h-6.25 sm:text-[10px]"
             />
 
-            <small className="mt-1 text-[10px] text-red-600 sm:text-[8px]">
-              Título é obrigatório
-            </small>
           </div>
 
           <div className="mb-3 flex flex-col">
@@ -122,7 +119,7 @@ export default function TaskModal({ onClose, onSave }) {
               htmlFor="description"
               className="mb-1.5 text-xs font-semibold text-zinc-700 sm:text-[9px]"
             >
-              Descrição{" "}
+              Descrição
               <span className="font-normal text-zinc-500">(Opcional)</span>
             </label>
 
