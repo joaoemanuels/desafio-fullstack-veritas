@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { DndContext, closestCorners } from "@dnd-kit/core";
+
 import Header from "./components/Header";
 import TaskModal from "./components/TaskModal";
 import KanbanBoard from "./components/KanbanBoard";
@@ -80,14 +82,29 @@ export default function App() {
   async function handleMoveTask(id, newStatus) {
     setError(null);
     const task = tasks.find((t) => t.id === id);
-    if (!task) return;
+    if (!task || task.status === newStatus) return;
+
+    setTasks((prev) =>
+      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t)),
+    );
 
     try {
       const updated = await api.updateTask(id, { ...task, status: newStatus });
       setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
     } catch (err) {
       setError(err.message);
+      setTasks((prev) => prev.map((t) => (t.id === id ? task : t)));
     }
+  }
+
+  function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over) return;
+
+    const taskId = active.id;
+    const newStatus = over.id;
+
+    handleMoveTask(taskId, newStatus);
   }
 
   const columns = columnsMeta.map((meta) => ({
@@ -103,7 +120,7 @@ export default function App() {
 
       {error && (
         <div className="mx-4 mt-4 rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
-          {error}{" "}
+          {error}
           <button
             type="button"
             onClick={loadTasks}
@@ -115,13 +132,14 @@ export default function App() {
       )}
 
       {isLoading ? (
-        <p className="p-4 text-sm text-zinc-500">Carregando tarefas...</p>
+        <p className="p-4 text-sm text-zinc-500">Carregando tarefas...</p> //implementar o componente de loading
       ) : (
-        <KanbanBoard
-          columns={columns}
-          onDeleteTask={handleDeleteTask}
-          onMoveTask={handleMoveTask}
-        />
+        <DndContext
+          collisionDetection={closestCorners}
+          onDragEnd={handleDragEnd}
+        >
+          <KanbanBoard columns={columns} onDeleteTask={handleDeleteTask} />
+        </DndContext>
       )}
 
       {showModal && (
