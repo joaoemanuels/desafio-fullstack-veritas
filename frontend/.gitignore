@@ -24,3 +24,8 @@ dist-ssr
 *.sw?
 
 ROADMAP.md
+
+.env.local
+.env.production
+
+.env*
