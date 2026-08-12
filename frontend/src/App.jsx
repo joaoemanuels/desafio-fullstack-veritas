@@ -3,6 +3,8 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
+  TouchSensor,
+  MouseSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -37,7 +39,20 @@ const columnsMeta = [
 ];
 
 export default function App() {
-  const sensors = useSensors(useSensor(PointerSensor));
+  // const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 8,
+      },
+    }),
+  );
 
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);

@@ -20,6 +20,7 @@ export default function TaskCard({ task, onDelete, onEdit }) {
     transform: CSS.Transform.toString(transform),
     transition: isDragging ? undefined : transition,
     opacity: isDragging ? 0.5 : 1,
+    touchAction: "none",
   };
 
   const priorityStyles = {
