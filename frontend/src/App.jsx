@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import KanbanBoardSkeleton from "./components/board/KanbanBoardSkeleton";
 import KanbanBoard from "./components/board/KanbanBoard";
 import TaskAddModal from "./components/task/TaskAddModal";
+import TaskEditModal from "./components/task/TaskEditModal";
 
 const columnsMeta = [
   {
@@ -81,15 +82,25 @@ export default function App() {
     }
   }
 
-  async function handleUpdateTask(id, updates) {
+  async function handleUpdateTask(updates) {
     setError(null);
     try {
-      const updated = await api.updateTask(id, { ...editingTask, ...updates });
-      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      const updated = await api.updateTask(editingTask.id, {
+        ...editingTask,
+        ...updates,
+      });
+      setTasks((prev) =>
+        prev.map((t) => (t.id === editingTask.id ? updated : t)),
+      );
       setEditingTask(null);
     } catch (err) {
       setError(err.message);
     }
+  }
+
+  async function handleDeleteFromEdit(id) {
+    await handleDeleteTask(id);
+    setEditingTask(null);
   }
 
   async function handleMoveTask(id, newStatus) {
@@ -170,9 +181,11 @@ export default function App() {
         <TaskEditModal
           task={editingTask}
           onClose={() => setEditingTask(null)}
-          onSave={(updates) => handleUpdateTask(editingTask.id, updates)}
+          onSave={handleUpdateTask}
+          onDelete={handleDeleteFromEdit}
         />
       )}
+      
     </>
   );
 }

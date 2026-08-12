@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import ConfirmDeleteModal from "../../ui/ConfirmModal";
-import { Trash2 } from "lucide-react";
+import { Pen, Trash2 } from "lucide-react";
 
 export default function TaskCard({ task, onDelete, onEdit }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -34,10 +34,19 @@ export default function TaskCard({ task, onDelete, onEdit }) {
         style={style}
         {...listeners}
         {...attributes}
-        onClick={() => onEdit(task)}
         className="relative cursor-grab overflow-hidden rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing sm:p-5"
       >
         <div className={`absolute left-0 top-0 h-full w-1 ${task.color}`} />
+
+        <button
+          type="button"
+          onPointerDown={(e) => e.stopPropagation()}
+          onClick={() => onEdit(task)}
+          aria-label={`Editar tarefa ${task.title}`}
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-blue-50 hover:text-blue-500 cursor-pointer"
+        >
+          <Pen size={17} />
+        </button>
 
         <button
           type="button"
@@ -46,13 +55,13 @@ export default function TaskCard({ task, onDelete, onEdit }) {
             e.stopPropagation();
             setShowDeleteModal(true);
           }}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-red-50 hover:text-red-500"
+          className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-red-50 hover:text-red-500 cursor-pointer"
           aria-label={`Excluir tarefa ${task.title}`}
         >
           <Trash2 size={17} />
         </button>
 
-        <div className="pr-8">
+        <div className="px-8">
           <h3 className="text-base font-bold leading-tight text-zinc-900 sm:text-xl">
             {task.title}
           </h3>
