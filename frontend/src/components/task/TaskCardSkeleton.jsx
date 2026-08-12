@@ -1,6 +1,6 @@
 export default function TaskCardSkeleton() {
   return (
-    <article className="relative overflow-hidden rounded-xl bg-white p-4 shadow-sm sm:p-5">
+    <article className="relative overflow-hidden rounded-xl bg-white p-4 shadow-sm sm:p-5  animate-pulse">
       <div className="absolute left-0 top-0 h-full w-1 bg-zinc-200" />
 
       <div className="pr-8">

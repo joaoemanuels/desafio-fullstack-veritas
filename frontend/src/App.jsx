@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   DndContext,
   closestCenter,
-  PointerSensor,
   TouchSensor,
   MouseSensor,
   useSensor,
@@ -39,7 +38,6 @@ const columnsMeta = [
 ];
 
 export default function App() {
-  // const sensors = useSensors(useSensor(PointerSensor));
   const sensors = useSensors(
     useSensor(MouseSensor, {
       activationConstraint: {
@@ -130,6 +128,7 @@ export default function App() {
   function findColumnOfTask(taskId) {
     return tasks.find((t) => t.id === taskId)?.status;
   }
+
   function handleDragOver(event) {
     const { active, over } = event;
     if (!over) return;
@@ -148,6 +147,7 @@ export default function App() {
       prev.map((t) => (t.id === activeId ? { ...t, status: overStatus } : t)),
     );
   }
+
   async function handleDragEnd(event) {
     const { active, over } = event;
     if (!over) return;
@@ -194,6 +194,7 @@ export default function App() {
       loadTasks();
     }
   }
+  
   const columns = columnsMeta.map((meta) => ({
     ...meta,
     tasks: tasks
