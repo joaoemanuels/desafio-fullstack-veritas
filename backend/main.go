@@ -7,9 +7,10 @@ import (
 
 func withCORS(next http.Handler) http.Handler {
 	allowedOrigins := map[string]bool{
-		"http://localhost:5173":                              true,
-		"http://localhost:4173":                              true,
-		"http://192.168.0.6:5173":                            true,
+		"http://localhost:5173":                             true,
+		"http://localhost:4173":                             true,
+		"http://192.168.0.6:5173":                           true,
+		"http://192.168.0.2:5173":                           true,
 		"https://desafio-fullstack-veritas-c82j.vercel.app": true,
 	}
 

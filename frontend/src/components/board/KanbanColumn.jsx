@@ -1,8 +1,8 @@
 import { useDroppable } from "@dnd-kit/core";
-import TaskCard from "./TaskCard";
-import EmptyState from "../ui/EmptyState";
+import TaskCard from "../task/TaskCard";
+import EmptyState from "../../ui/EmptyState";
 
-export default function Column({ column, onDeleteTask }) {
+export default function Column({ column, onDeleteTask, onEditTask }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
   return (
@@ -31,11 +31,16 @@ export default function Column({ column, onDeleteTask }) {
         {column.tasks.length > 0 ? (
           <div className="flex flex-col gap-2">
             {column.tasks.map((task) => (
-              <TaskCard key={task.id} task={task} onDelete={onDeleteTask} />
+              <TaskCard
+                key={task.id}
+                task={task}
+                onDelete={onDeleteTask}
+                onEdit={onEditTask}
+              />
             ))}
           </div>
         ) : (
-          <EmptyState message={"Adicione uma tarefa"}/>
+          <EmptyState message={"Adicione uma tarefa"} />
         )}
       </div>
     </section>

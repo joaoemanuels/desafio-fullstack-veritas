@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { DndContext, closestCorners } from "@dnd-kit/core";
 
-import Header from "./components/Header";
-import TaskModal from "./components/TaskModal";
-import KanbanBoard from "./components/KanbanBoard";
 import * as api from "./services/api";
-import Loading from "./ui/Loading";
+import Header from "./components/Header";
+import KanbanBoardSkeleton from "./components/board/KanbanBoardSkeleton";
+import KanbanBoard from "./components/board/KanbanBoard";
+import TaskAddModal from "./components/task/TaskAddModal";
 
 const columnsMeta = [
   {
@@ -31,6 +31,7 @@ const columnsMeta = [
 export default function App() {
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [editingTask, setEditingTask] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -75,6 +76,17 @@ export default function App() {
     try {
       await api.deleteTask(id);
       setTasks((prev) => prev.filter((t) => t.id !== id));
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
+  async function handleUpdateTask(id, updates) {
+    setError(null);
+    try {
+      const updated = await api.updateTask(id, { ...editingTask, ...updates });
+      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
+      setEditingTask(null);
     } catch (err) {
       setError(err.message);
     }
@@ -133,20 +145,32 @@ export default function App() {
       )}
 
       {isLoading ? (
-        <Loading message="Carregando tarefas..." />
+        <KanbanBoardSkeleton />
       ) : (
         <DndContext
           collisionDetection={closestCorners}
           onDragEnd={handleDragEnd}
         >
-          <KanbanBoard columns={columns} onDeleteTask={handleDeleteTask} />
+          <KanbanBoard
+            columns={columns}
+            onDeleteTask={handleDeleteTask}
+            onEditTask={setEditingTask}
+          />
         </DndContext>
       )}
 
       {showModal && (
-        <TaskModal
+        <TaskAddModal
           onClose={() => setShowModal(false)}
           onSave={handleSaveTask}
+        />
+      )}
+
+      {editingTask && (
+        <TaskEditModal
+          task={editingTask}
+          onClose={() => setEditingTask(null)}
+          onSave={(updates) => handleUpdateTask(editingTask.id, updates)}
         />
       )}
     </>

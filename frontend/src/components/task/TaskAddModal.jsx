@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function TaskModal({ onClose, onSave }) {
+export default function TaskAddModal({ onClose, onSave }) {
   const [status, setStatus] = useState("todo");
   const [priority, setPriority] = useState("Média");
 

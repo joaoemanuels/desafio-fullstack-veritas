@@ -1,4 +1,4 @@
-import Column from "./KanbanColum";
+import Column from "./KanbanColumn";
 
 export default function KanbanBoard({ columns, onDeleteTask }) {
   return (
