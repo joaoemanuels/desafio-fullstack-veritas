@@ -39,6 +39,7 @@ func main() {
 	mux.HandleFunc("POST /tasks", CreateTask)
 	mux.HandleFunc("PUT /tasks/{id}", UpdateTask)
 	mux.HandleFunc("DELETE /tasks/{id}", DeleteTask)
+	mux.HandleFunc("PUT /tasks/reorder", ReorderTasks)
 
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")

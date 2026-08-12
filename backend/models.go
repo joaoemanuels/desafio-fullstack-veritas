@@ -9,6 +9,7 @@ type Task struct {
 	Category    string `json:"category"`
 	Priority    string `json:"priority"`
 	Status      string `json:"status"`
+	Order       int    `json:"order"`
 }
 
 const (
