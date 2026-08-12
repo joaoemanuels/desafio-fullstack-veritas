@@ -37,3 +37,13 @@ export async function deleteTask(id) {
   });
   return handleResponse(res);
 }
+
+export async function reorderTasks(items) {
+  const res = await fetch(`${BASE_URL}/tasks/reorder`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(items),
+  });
+  if (!res.ok) throw new Error("Não foi possível reordenar as tarefas");
+  return res.json();
+}

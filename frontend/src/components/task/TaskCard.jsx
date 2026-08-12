@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useDraggable } from "@dnd-kit/core";
+import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import ConfirmDeleteModal from "../../ui/ConfirmModal";
 import { Pen, Trash2 } from "lucide-react";
@@ -7,13 +7,18 @@ import { Pen, Trash2 } from "lucide-react";
 export default function TaskCard({ task, onDelete, onEdit }) {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({
-      id: task.id,
-    });
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task.id });
 
   const style = {
-    transform: CSS.Translate.toString(transform),
+    transform: CSS.Transform.toString(transform),
+    transition: isDragging ? undefined : transition,
     opacity: isDragging ? 0.5 : 1,
   };
 
@@ -34,7 +39,9 @@ export default function TaskCard({ task, onDelete, onEdit }) {
         style={style}
         {...listeners}
         {...attributes}
-        className="relative cursor-grab overflow-hidden rounded-xl bg-white p-4 shadow-sm transition hover:shadow-md active:cursor-grabbing sm:p-5"
+        className={`relative cursor-grab overflow-hidden rounded-xl bg-white p-4 shadow-sm sm:p-5 ${
+          isDragging ? "" : "transition-shadow hover:shadow-md"
+        } active:cursor-grabbing`}
       >
         <div className={`absolute left-0 top-0 h-full w-1 ${task.color}`} />
 

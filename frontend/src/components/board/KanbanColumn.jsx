@@ -1,4 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
+import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import TaskCard from "../task/TaskCard";
 import EmptyState from "../../ui/EmptyState";
 
@@ -10,14 +11,9 @@ export default function Column({ column, onDeleteTask, onEditTask }) {
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className={`h-2.5 w-2.5 rounded-full ${column.color}`} />
-          <h2 className="text-sm font-semibold text-zinc-700">
-            {column.title}
-          </h2>
+          <h2 className="text-sm font-semibold text-zinc-700">{column.title}</h2>
         </div>
-
-        <span
-          className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-medium ${column.countColor}`}
-        >
+        <span className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-medium ${column.countColor}`}>
           {column.tasks.length}
         </span>
       </div>
@@ -29,18 +25,18 @@ export default function Column({ column, onDeleteTask, onEditTask }) {
         }`}
       >
         {column.tasks.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            {column.tasks.map((task) => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                onDelete={onDeleteTask}
-                onEdit={onEditTask}
-              />
-            ))}
-          </div>
+          <SortableContext
+            items={column.tasks.map((t) => t.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="flex flex-col gap-2">
+              {column.tasks.map((task) => (
+                <TaskCard key={task.id} task={task} onDelete={onDeleteTask} onEdit={onEditTask} />
+              ))}
+            </div>
+          </SortableContext>
         ) : (
-          <EmptyState message={"Adicione uma tarefa"} />
+          <EmptyState message="Adicione uma tarefa" />
         )}
       </div>
     </section>

@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
-import { DndContext, closestCorners } from "@dnd-kit/core";
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 
 import * as api from "./services/api";
 import Header from "./components/Header";
@@ -30,6 +37,8 @@ const columnsMeta = [
 ];
 
 export default function App() {
+  const sensors = useSensors(useSensor(PointerSensor));
+
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -103,38 +112,78 @@ export default function App() {
     setEditingTask(null);
   }
 
-  async function handleMoveTask(id, newStatus) {
-    setError(null);
-    const task = tasks.find((t) => t.id === id);
-    if (!task || task.status === newStatus) return;
-
-    setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: newStatus } : t)),
-    );
-
-    try {
-      const updated = await api.updateTask(id, { ...task, status: newStatus });
-      setTasks((prev) => prev.map((t) => (t.id === id ? updated : t)));
-    } catch (err) {
-      setError(err.message);
-      setTasks((prev) => prev.map((t) => (t.id === id ? task : t)));
-    }
+  function findColumnOfTask(taskId) {
+    return tasks.find((t) => t.id === taskId)?.status;
   }
-
-  function handleDragEnd(event) {
+  function handleDragOver(event) {
     const { active, over } = event;
     if (!over) return;
 
-    const taskId = active.id;
-    const newStatus = over.id;
+    const activeId = active.id;
+    const overId = over.id;
 
-    handleMoveTask(taskId, newStatus);
+    const activeStatus = findColumnOfTask(activeId);
+    const overStatus = columnsMeta.some((c) => c.id === overId)
+      ? overId
+      : findColumnOfTask(overId);
+
+    if (!activeStatus || !overStatus || activeStatus === overStatus) return;
+
+    setTasks((prev) =>
+      prev.map((t) => (t.id === activeId ? { ...t, status: overStatus } : t)),
+    );
   }
+  async function handleDragEnd(event) {
+    const { active, over } = event;
+    if (!over) return;
 
+    const activeId = active.id;
+    const overId = over.id;
+
+    const activeTask = tasks.find((t) => t.id === activeId);
+    if (!activeTask) return;
+
+    const targetStatus = columnsMeta.some((c) => c.id === overId)
+      ? overId
+      : findColumnOfTask(overId);
+
+    const tasksInColumn = tasks
+      .filter((t) => t.status === targetStatus)
+      .sort((a, b) => a.order - b.order);
+
+    const oldIndex = tasksInColumn.findIndex((t) => t.id === activeId);
+    const overIndex = tasksInColumn.findIndex((t) => t.id === overId);
+
+    const newOrder =
+      oldIndex !== -1 && overIndex !== -1
+        ? arrayMove(tasksInColumn, oldIndex, overIndex)
+        : tasksInColumn;
+
+    const updatedItems = newOrder.map((t, index) => ({
+      id: t.id,
+      status: targetStatus,
+      order: index,
+    }));
+
+    setTasks((prev) =>
+      prev.map((t) => {
+        const match = updatedItems.find((u) => u.id === t.id);
+        return match ? { ...t, status: match.status, order: match.order } : t;
+      }),
+    );
+
+    try {
+      await api.reorderTasks(updatedItems);
+    } catch (err) {
+      setError(err.message);
+      loadTasks();
+    }
+  }
   const columns = columnsMeta.map((meta) => ({
     ...meta,
     tasks: tasks
       .filter((task) => task.status === meta.id)
+      .sort((a, b) => a.order - b.order)
       .map((task) => ({ ...task, color: meta.color })),
   }));
 
@@ -159,7 +208,9 @@ export default function App() {
         <KanbanBoardSkeleton />
       ) : (
         <DndContext
-          collisionDetection={closestCorners}
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
           <KanbanBoard
@@ -185,7 +236,6 @@ export default function App() {
           onDelete={handleDeleteFromEdit}
         />
       )}
-      
     </>
   );
 }
