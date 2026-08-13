@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"errors"
+	"strings"
+)
 
 type Task struct {
 	ID          string `json:"id"`
@@ -24,8 +27,9 @@ var validStatuses = map[string]bool{
 	StatusDone:       true,
 }
 
+// Testes
 func (t *Task) Validate() error {
-	if t.Title == "" {
+	if strings.TrimSpace(t.Title) == "" {
 		return errors.New("título é obrigatório")
 	}
 
