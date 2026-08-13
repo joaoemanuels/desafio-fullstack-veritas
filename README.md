@@ -1,9 +1,12 @@
 # Mini Kanban — Desafio Fullstack Veritas
 
+
 Aplicação de gerenciamento de tarefas em formato Kanban, desenvolvida como desafio técnico para a **Veritas Consultoria Empresarial**. O projeto é dividido em duas partes independentes: um backend em **Go** (API REST) e um frontend em **React** (Vite), com persistência em memória e deploy em produção.
 
 🔗 **Aplicação em produção:** [desafioveritas.online](https://desafioveritas.online)
 🔗 **API:** [desafio-fullstack-veritas.onrender.com](https://desafio-fullstack-veritas.onrender.com)
+
+![Demonstração do Kanban](./docs/imagens/kanban-demo.webp)
 
 ---
 
@@ -123,7 +126,6 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 ## ⚠️ Limitações conhecidas
 
-- **Dados não são persistidos em disco.** Como o armazenamento é em memória, qualquer reinício do servidor (deploy, sleep do plano gratuito do Render, etc.) apaga todas as tarefas cadastradas.
 - **Sem paginação.** O endpoint `GET /tasks` retorna todas as tarefas de uma vez, o que não escalaria para um volume grande de dados.
 - **Sem filtro por coluna ou categoria** na interface, apesar de estar mapeado no fluxo de usuário original.
 - **Sem testes automatizados**, tanto no backend quanto no frontend.
@@ -133,14 +135,12 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 ## Próximos passos
 
-- [ ] **Migrar a persistência para [Supabase](https://supabase.com/)** (PostgreSQL), substituindo o armazenamento em memória e eliminando a perda de dados a cada reinício do servidor
-- [ ] **Adicionar testes automatizados**
+- [x] **Migrar a persistência para [Supabase](https://supabase.com/)** (PostgreSQL), substituindo o armazenamento em memória e eliminando a perda de dados a cada reinício do servidor
+- [x] **Adicionar testes automatizados**
   - Backend: testes unitários para handlers e validações (`testing` + `httptest`, pacote padrão do Go)
   - Frontend: testes de componente com Vitest + Testing Library
 - [ ] **Containerizar a aplicação com Docker** (`Dockerfile` para backend e frontend, com `docker-compose` para orquestrar localmente junto de um banco Postgres)
-- [ ] **Autenticação** de usuários, possivelmente via Supabase Auth, permitindo múltiplos quadros isolados por conta
 - [ ] **Filtro por coluna e categoria** na interface
-- [ ] **Campo de prazo (`due_date`)** nas tarefas, com indicação visual de vencimento próximo
 - [ ] **CI/CD** com GitHub Actions para rodar testes e lint automaticamente a cada push
 - [ ] **Observabilidade mais robusta** na página de Status da API (histórico de uptime real via serviço externo de monitoramento, em vez de apenas o uptime do processo atual)
 
@@ -152,9 +152,7 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 Diagramas com as principais ações do usuário no sistema e a interação entre frontend, API e a camada de persistência em memória:
 
-![User Flow e Fluxo de Dados](./docs/user-flow-fluxo-dados.png)
-
-> Observação: o fluxo de "Editar Tarefa" já reflete a implementação atual. O fluxo de "Filtrar por Coluna" está mapeado como melhoria futura (ver seção acima) e ainda não está implementado na interface.
+![User Flow e Fluxo de Dados](./docs/user-flow.png)
 
 ---
 
