@@ -1,15 +1,8 @@
-import { useEffect, useState } from "react";
-import {
-  DndContext,
-  closestCenter,
-  TouchSensor,
-  MouseSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import { arrayMove } from "@dnd-kit/sortable";
+import { DndContext, closestCenter } from "@dnd-kit/core";
+import { useState } from "react";
 
-import * as api from "./services/api";
+import { useTasks } from "./hooks/useTasks";
+import { useDragAndDrop } from "./hooks/useDragAndDrop";
 import Header from "./components/Header";
 import KanbanBoardSkeleton from "./components/board/KanbanBoardSkeleton";
 import KanbanBoard from "./components/board/KanbanBoard";
@@ -38,163 +31,37 @@ const columnsMeta = [
 ];
 
 export default function App() {
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 8,
-      },
-    }),
+  const {
+    tasks,
+    setTasks,
+    isLoading,
+    error,
+    loadTasks,
+    createTask,
+    deleteTask,
+    updateTask,
+    reorderTasks,
+  } = useTasks();
+  const { sensors, handleDragOver, handleDragEnd } = useDragAndDrop(
+    tasks,
+    setTasks,
+    reorderTasks,
+    columnsMeta,
   );
 
-  const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    loadTasks();
-  }, []);
-
-  async function loadTasks() {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await api.getTasks();
-      setTasks(data ?? []);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }
 
   async function handleSaveTask(task) {
-    setError(null);
-
-    try {
-      const created = await api.createTask({
-        title: task.title,
-        description: task.description,
-        category: task.category,
-        priority: task.priority,
-        status: task.status,
-      });
-
-      setTasks((prev) => [...prev, created]);
-      setShowModal(false);
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  async function handleDeleteTask(id) {
-    setError(null);
-    try {
-      await api.deleteTask(id);
-      setTasks((prev) => prev.filter((t) => t.id !== id));
-    } catch (err) {
-      setError(err.message);
-    }
+    await createTask(task);
+    setShowModal(false);
   }
 
   async function handleUpdateTask(updates) {
-    setError(null);
-    try {
-      const updated = await api.updateTask(editingTask.id, {
-        ...editingTask,
-        ...updates,
-      });
-      setTasks((prev) =>
-        prev.map((t) => (t.id === editingTask.id ? updated : t)),
-      );
-      setEditingTask(null);
-    } catch (err) {
-      setError(err.message);
-    }
-  }
-
-  async function handleDeleteFromEdit(id) {
-    await handleDeleteTask(id);
+    await updateTask(editingTask.id, updates);
     setEditingTask(null);
   }
 
-  function findColumnOfTask(taskId) {
-    return tasks.find((t) => t.id === taskId)?.status;
-  }
-
-  function handleDragOver(event) {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    const activeStatus = findColumnOfTask(activeId);
-    const overStatus = columnsMeta.some((c) => c.id === overId)
-      ? overId
-      : findColumnOfTask(overId);
-
-    if (!activeStatus || !overStatus || activeStatus === overStatus) return;
-
-    setTasks((prev) =>
-      prev.map((t) => (t.id === activeId ? { ...t, status: overStatus } : t)),
-    );
-  }
-
-  async function handleDragEnd(event) {
-    const { active, over } = event;
-    if (!over) return;
-
-    const activeId = active.id;
-    const overId = over.id;
-
-    const activeTask = tasks.find((t) => t.id === activeId);
-    if (!activeTask) return;
-
-    const targetStatus = columnsMeta.some((c) => c.id === overId)
-      ? overId
-      : findColumnOfTask(overId);
-
-    const tasksInColumn = tasks
-      .filter((t) => t.status === targetStatus)
-      .sort((a, b) => a.order - b.order);
-
-    const oldIndex = tasksInColumn.findIndex((t) => t.id === activeId);
-    const overIndex = tasksInColumn.findIndex((t) => t.id === overId);
-
-    const newOrder =
-      oldIndex !== -1 && overIndex !== -1
-        ? arrayMove(tasksInColumn, oldIndex, overIndex)
-        : tasksInColumn;
-
-    const updatedItems = newOrder.map((t, index) => ({
-      id: t.id,
-      status: targetStatus,
-      order: index,
-    }));
-
-    setTasks((prev) =>
-      prev.map((t) => {
-        const match = updatedItems.find((u) => u.id === t.id);
-        return match ? { ...t, status: match.status, order: match.order } : t;
-      }),
-    );
-
-    try {
-      await api.reorderTasks(updatedItems);
-    } catch (err) {
-      setError(err.message);
-      loadTasks();
-    }
-  }
-  
   const columns = columnsMeta.map((meta) => ({
     ...meta,
     tasks: tasks
@@ -231,7 +98,7 @@ export default function App() {
         >
           <KanbanBoard
             columns={columns}
-            onDeleteTask={handleDeleteTask}
+            onDeleteTask={deleteTask}
             onEditTask={setEditingTask}
           />
         </DndContext>
@@ -249,7 +116,6 @@ export default function App() {
           task={editingTask}
           onClose={() => setEditingTask(null)}
           onSave={handleUpdateTask}
-          onDelete={handleDeleteFromEdit}
         />
       )}
     </>
