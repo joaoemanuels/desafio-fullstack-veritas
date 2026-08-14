@@ -152,7 +152,8 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 Diagramas com as principais ações do usuário no sistema e a interação entre frontend, API e a camada de persistência em memória:
 
-![User Flow e Fluxo de Dados](./docs/user-flow.png)
+![User Flow](./docs/user-flow.png)
+![Fluxo de Dados](./docs/data-flow.png)
 
 ---
 
