@@ -1,6 +1,5 @@
 # Mini Kanban — Desafio Fullstack Veritas
 
-
 Aplicação de gerenciamento de tarefas em formato Kanban, desenvolvida como desafio técnico para a **Veritas Consultoria Empresarial**. O projeto é dividido em duas partes independentes: um backend em **Go** (API REST) e um frontend em **React** (Vite), com persistência em memória e deploy em produção.
 
 🔗 **Aplicação em produção:** [desafioveritas.online](https://desafioveritas.online)
@@ -29,27 +28,49 @@ Aplicação de gerenciamento de tarefas em formato Kanban, desenvolvida como des
 
 - [Go](https://go.dev/dl/) 1.22 ou superior
 - [Node.js](https://nodejs.org/) 18 ou superior
+- Um banco de dados PostgreSQL (veja abaixo como criar um gratuito)
 
-### Backend
+### 1. Banco de dados
+
+O projeto usa PostgreSQL. A forma mais rápida de conseguir um banco gratuito:
+
+1. Crie uma conta em [supabase.com](https://supabase.com/) e um novo projeto
+2. Em **Project Settings → Database → Connection String**, copie a string no formato `URI`
+3. No **SQL Editor** do Supabase, rode o script de criação da tabela disponível em [`backend/schema.sql`](./backend/schema.sql)
+
+> Qualquer instância PostgreSQL funciona (local, Docker, Railway, Neon etc.) — Supabase é só a opção usada no desenvolvimento original.
+
+### 2. Backend
 
 ```bash
 cd backend
+cp .env.example .env
+```
+
+Edite o `.env` e preencha `DATABASE_URL` com a connection string obtida no passo anterior:
+
+```dotenv
+DATABASE_URL=postgresql://usuario:senha@host:porta/nome_do_banco
+```
+
+Depois, suba o servidor:
+
+```bash
 go run .
 ```
 
-A API sobe em `http://localhost:8080` por padrão (ou na porta definida pela variável de ambiente `PORT`).
+A API sobe em `http://localhost:8080` por padrão (ou na porta definida pela variável de ambiente `PORT`). Sem uma `DATABASE_URL` válida, o servidor não sobe, a conexão é validada na inicialização.
 
-### Frontend
+### 3. Frontend
 
 ```bash
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
 
-O app fica disponível em `http://localhost:5173`.
-
-> **Testando no celular pela mesma rede local:** rode `npm run dev -- --host` e ajuste a URL da API no frontend para o IP local da máquina (ex: `http://192.168.0.x:8080`), garantindo que esse endereço esteja liberado no CORS do backend.
+O `.env` já vem configurado com `VITE_API_URL=http://localhost:8080`, apontando para o backend local. O app fica disponível em `http://localhost:5173`.
 
 ---
 
@@ -131,7 +152,6 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 - **Ordenação de tarefas:** cada tarefa carrega um campo `order`, recalculado no backend a cada reordenação ou mudança de coluna, garantindo que a posição visual sobreviva a atualizações de página.
 - **Drag and drop com `@dnd-kit`:** escolhido por ter suporte ativo, melhor acessibilidade e compatibilidade nativa com touch, necessária para o uso mobile.
 
-
 ---
 
 ## ⚠️ Limitações conhecidas
@@ -143,16 +163,15 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 ---
 
-## Próximos passos
+## Melhorias futuras.
 
 - [x] **Migrar a persistência para [Supabase](https://supabase.com/)** (PostgreSQL), substituindo o armazenamento em memória e eliminando a perda de dados a cada reinício do servidor
 - [x] **Adicionar testes automatizados**
-  - [ ] Backend: testes unitários para handlers e validações (`testing` + `httptest`, pacote padrão do Go)
-  - [x] Frontend: testes de componente com Vitest + Testing Library
+- [x] Backend: testes unitários (`models_test.go`)
+- [x] Frontend: testes de componente com Vitest + Testing Library
 - [ ] **Containerizar a aplicação com Docker** (`Dockerfile` para backend e frontend, com `docker-compose` para orquestrar localmente junto de um banco Postgres)
 - [ ] **Filtro por coluna e categoria** na interface
 - [ ] **CI/CD** com GitHub Actions para rodar testes e lint automaticamente a cada push
-- [ ] **Sem testes automatizados no backend além de `models_test.go`.**
 
 ---
 
