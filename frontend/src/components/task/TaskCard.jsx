@@ -46,28 +46,30 @@ export default function TaskCard({ task, onDelete, onEdit }) {
       >
         <div className={`absolute left-0 top-0 h-full w-1 ${task.color}`} />
 
-        <button
-          type="button"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={() => onEdit(task)}
-          aria-label={`Editar tarefa ${task.title}`}
-          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-blue-50 hover:text-blue-500 cursor-pointer"
-        >
-          <Pen size={17} />
-        </button>
-
-        <button
-          type="button"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowDeleteModal(true);
-          }}
-          className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-red-50 hover:text-red-500 cursor-pointer"
-          aria-label={`Excluir tarefa ${task.title}`}
-        >
-          <Trash2 size={17} />
-        </button>
+        <div className="flex justify-end gap-4">
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowDeleteModal(true);
+            }}
+            className="flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-red-50 hover:text-red-500 cursor-pointer"
+            aria-label={`Excluir tarefa ${task.title}`}
+          >
+            <Trash2 size={17} />
+          </button>
+          
+          <button
+            type="button"
+            onPointerDown={(e) => e.stopPropagation()}
+            onClick={() => onEdit(task)}
+            aria-label={`Editar tarefa ${task.title}`}
+            className=" flex h-8 w-8 items-center justify-center rounded-md text-zinc-400 transition hover:bg-blue-50 hover:text-blue-500 cursor-pointer"
+          >
+            <Pen size={17} />
+          </button>
+        </div>
 
         <div className="px-8">
           <h3 className="text-base font-bold leading-tight text-zinc-900 sm:text-xl">

@@ -58,20 +58,29 @@ O app fica disponível em `http://localhost:5173`.
 ```
 desafio-fullstack-veritas/
 ├── backend/
-│   ├── main.go        # roteamento, CORS, inicialização do servidor
-│   ├── handlers.go    # handlers HTTP e armazenamento em memória
-│   ├── models.go      # struct Task e validações
+│   ├── database/
+│   │   └── database.go
+│   ├── main.go            # roteamento, CORS, inicialização do servidor
+│   ├── handlers.go        # handlers HTTP e armazenamento em memória
+│   ├── models.go          # struct Task e validações
+│   ├── models_test.go     # testes do models
+│   ├── go.sum
 │   └── go.mod
 │
 └── frontend/
     ├── src/
     │   ├── components/
-    │   │   ├── task/          # TaskCard, TaskAddModal, TaskEditModal, skeletons
-    │   │   ├── board/         # KanbanBoard, KanbanColumn, skeletons
+    │   │   ├── task/                # TaskCard, TaskAddModal, TaskEditModal, skeletons
+    │   │   ├── board/               # KanbanBoard, KanbanColumn, skeletons
     │   │   └── Header.jsx
-    │   ├── ui/                # componentes genéricos (ConfirmModal, EmptyState, Loading)
+    │   ├── constants/
+    │   │   └── taskOptions.js       # opções fixas de status, categoria e prioridade
+    │   ├── hooks/
+    │   │   ├── useDragAndDrop.js    # sensores e lógica de drag and drop (dnd-kit)
+    │   │   └── useTasks.js          # estado, CRUD e sincronização de tasks com a API
+    │   ├── ui/                      # componentes genéricos (ConfirmModal, EmptyState, Loading)
     │   ├── services/
-    │   │   └── api.js         # camada de comunicação com a API
+    │   │   └── api.js               # camada de comunicação com a API
     │   └── App.jsx
     ├── index.html
     └── vite.config.js

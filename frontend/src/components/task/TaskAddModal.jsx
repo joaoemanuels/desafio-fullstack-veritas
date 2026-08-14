@@ -22,8 +22,8 @@ export default function TaskAddModal({ onClose, onSave }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/40 p-3 sm:p-4 backdrop-blur-xs">
-      <div className="flex max-h-[90vh] w-full max-w-105 flex-col overflow-hidden rounded-[9px] bg-white shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-900/40 p-3 sm:p-4 backdrop-blur-xs animate-overlay-in">
+      <div className="flex max-h-[90vh] w-full max-w-105 flex-col overflow-hidden rounded-[9px] bg-white shadow-2xl animate-modal-in">
         <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-200 px-4 sm:h-12.5">
           <h2 className="text-base font-semibold text-zinc-800 sm:text-[14px]">
             Nova Tarefa
@@ -38,7 +38,6 @@ export default function TaskAddModal({ onClose, onSave }) {
             ×
           </button>
         </header>
-
         <form onSubmit={handleSubmit} className="overflow-y-auto px-4 pt-3.5">
           <div className="mb-3 flex flex-col">
             <label

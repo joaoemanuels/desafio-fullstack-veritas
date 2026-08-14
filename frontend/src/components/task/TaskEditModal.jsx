@@ -36,7 +36,7 @@ export default function TaskEditModal({ task, onClose, onSave }) {
               type="button"
               onClick={onClose}
               aria-label="Fechar modal"
-              className="p-1 text-2xl leading-none text-zinc-500 transition hover:text-zinc-900 sm:p-0 sm:text-[23px] cursor-pointer"
+              className=" text-zinc-400 transition hover:text-zinc-100 hover:bg-zinc-700 px-2.5 py-1.5 rounded-md cursor-pointer"
             >
               ×
             </button>

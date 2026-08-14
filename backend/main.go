@@ -1,10 +1,10 @@
 package main
 
 import (
-	"log"
-	"net/http"
 	"github.com/joho/godotenv"
 	"kanban-backend/database"
+	"log"
+	"net/http"
 )
 
 func withCORS(next http.Handler) http.Handler {
@@ -16,6 +16,7 @@ func withCORS(next http.Handler) http.Handler {
 		"https://desafio-fullstack-veritas-c82j.vercel.app": true,
 		"https://desafioveritas.online":                     true,
 		"https://www.desafioveritas.online":                 true,
+		"http://192.168.0.8:5173":                           true,
 	}
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

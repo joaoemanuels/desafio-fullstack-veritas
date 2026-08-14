@@ -1,15 +1,22 @@
+import { Plus } from "lucide-react";
+
 export default function Header({ onNewTask }) {
   return (
-    <header className="flex items-center justify-between border-b border-gray-200 px-4">
-      <h1 className="text-lg font-bold text-zinc-900">Mini Kanban</h1>
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-bg/85 backdrop-blur-md">
+      <div className="mx-auto flex h-18 w-full max-w-281.5 items-center justify-between px-5 sm:px-8">
+        <h1 className="font-heading text-[22px] font-medium tracking-tight text-text-h">
+          Mini Kanban
+        </h1>
 
-      <button
-        type="button"
-        onClick={onNewTask}
-        className="rounded-md bg-black px-3 py-2 text-sm font-medium text-white transition hover:bg-zinc-800 cursor-pointer"
-      >
-        + Nova Tarefa
-      </button>
+        <button
+          type="button"
+          onClick={onNewTask}
+          className="flex items-center gap-1.5 rounded-md bg-accent px-4 py-2.5 text-sm font-medium text-white transition hover:opacity-90 active:scale-95 cursor-pointer"
+        >
+          <Plus size={16} strokeWidth={2.5} />
+          Nova Tarefa
+        </button>
+      </div>
     </header>
   );
 }
