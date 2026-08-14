@@ -126,10 +126,11 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 ## Decisões técnicas
 
-- **Persistência em memória:** dado o escopo do desafio, os dados são armazenados em um `map` protegido por mutex (`sync.Mutex`), sem banco de dados externo. Isso simplificou a entrega inicial, mas significa que os dados são reiniciados a cada deploy ou reinício do servidor no Render, motivo pelo qual a migração para Supabase está priorizada nos próximos passos.
+- **Persistência em PostgreSQL (Supabase):** os dados são armazenados em um banco PostgreSQL hospedado no Supabase, acessado via `pgx/v5` com connection pooling. A escolha elimina a perda de dados a cada reinício ou deploy do servidor, problema presente na versão inicial (em memória) do desafio.
 - **CORS restrito por origem:** em vez de liberar `Access-Control-Allow-Origin: *`, o backend valida a origem da requisição contra uma lista explícita (ambiente local + domínio de produção), reduzindo a superfície de exposição da API.
 - **Ordenação de tarefas:** cada tarefa carrega um campo `order`, recalculado no backend a cada reordenação ou mudança de coluna, garantindo que a posição visual sobreviva a atualizações de página.
 - **Drag and drop com `@dnd-kit`:** escolhido por ter suporte ativo, melhor acessibilidade e compatibilidade nativa com touch, necessária para o uso mobile.
+
 
 ---
 
@@ -146,12 +147,12 @@ No backend, optei por manter os arquivos no nível raiz do pacote `main` (`handl
 
 - [x] **Migrar a persistência para [Supabase](https://supabase.com/)** (PostgreSQL), substituindo o armazenamento em memória e eliminando a perda de dados a cada reinício do servidor
 - [x] **Adicionar testes automatizados**
-  - Backend: testes unitários para handlers e validações (`testing` + `httptest`, pacote padrão do Go)
-  - Frontend: testes de componente com Vitest + Testing Library
+  - [ ] Backend: testes unitários para handlers e validações (`testing` + `httptest`, pacote padrão do Go)
+  - [x] Frontend: testes de componente com Vitest + Testing Library
 - [ ] **Containerizar a aplicação com Docker** (`Dockerfile` para backend e frontend, com `docker-compose` para orquestrar localmente junto de um banco Postgres)
 - [ ] **Filtro por coluna e categoria** na interface
 - [ ] **CI/CD** com GitHub Actions para rodar testes e lint automaticamente a cada push
-- [ ] **Observabilidade mais robusta** na página de Status da API (histórico de uptime real via serviço externo de monitoramento, em vez de apenas o uptime do processo atual)
+- [ ] **Sem testes automatizados no backend além de `models_test.go`.**
 
 ---
 
